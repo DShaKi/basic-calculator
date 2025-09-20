@@ -52,7 +52,9 @@ class CalculatorUI(QWidget):
                 text = text.replace("√", "sqrt(")
                 text = re.sub(r"sqrt\((\d+)", r"sqrt(\1)", text)
             try:
-                result = str(eval(text, {"__builtins__": None}, {'sqrt': math.sqrt}))
+                result = eval(text, {"__builtins__": None}, {'sqrt': math.sqrt})
+                result = round(result, 10)
+                result = str(result)
                 self.display.setText(result)
             except Exception as e:
                 error = Error()
