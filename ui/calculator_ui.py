@@ -1,5 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QPushButton, QLineEdit
-from logic import calculator_logic
+from ui.error_ui import Error
+import math
+import re
 
 class CalculatorUI(QWidget):
     def __init__(self):
@@ -21,6 +23,7 @@ class CalculatorUI(QWidget):
         buttons_layout = QGridLayout()
         
         buttons = [
+            "C/CE", '+/-', '√', '%',
             '7', '8', '9', '/',
             '4', '5', '6', '*',
             '1', '2', '3', '-',
@@ -43,11 +46,29 @@ class CalculatorUI(QWidget):
         self.setLayout(main_layout)
 
     def button_clicked(self, button_text):
-        nums = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.' }
-        funcs = { '+', '*', '-', '/' }
+        text = self.display.text()
         if button_text == "=":
-            result = str(eval(self.display.text()))
-            self.display.setText(result)
+            if '√' in text:
+                text = text.replace("√", "sqrt(")
+                text = re.sub(r"sqrt\((\d+)", r"sqrt(\1)", text)
+            try:
+                result = str(eval(text, {"__builtins__": None}, {'sqrt': math.sqrt}))
+                self.display.setText(result)
+            except Exception as e:
+                error = Error()
+                error.show_error_message(e)
+        elif button_text == '+/-':
+            match = re.search(r"([-]?\d*\.?\d+)$", text)
+            print(match)
+            if match:
+                number = match.group(1)
+                start, end = match.span(1)
+                if number.startswith("-"):
+                    new_number = number[1:]
+                else:
+                    new_number = "-" + number
+                self.display.setText(text[:int(start)] + new_number)
+        elif button_text == 'C/CE':
+            self.display.setText('')
         else:
-            text = self.display.text()
             self.display.setText(text + button_text)
