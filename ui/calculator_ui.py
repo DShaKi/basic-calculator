@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QPushButton, QLin
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 from ui.error_ui import Error
+from logic.calculator_logic import change_symbols
 import math
 import re
 
@@ -63,7 +64,7 @@ class CalculatorUI(QWidget):
     def button_style(self, btn_text):
         if btn_text in ['C', '+/-', '√', '%']:
             return "background-color: #555; color: white; border-radius: 15px;"
-        elif btn_text in ['/', '*', '-', '+', '=']:
+        elif btn_text in ['÷', '×', '-', '+', '=']:
             return "background-color: #ff9500; color: white; border-radius: 15px;"
         else:
             return "background-color: #333; color: white; border-radius: 15px;"
@@ -71,13 +72,7 @@ class CalculatorUI(QWidget):
     def button_clicked(self, button_text):
         text = self.display.text()
         if button_text == "=":
-            if '√' in text:
-                text = text.replace("√", "sqrt(")
-                text = re.sub(r"sqrt\((\d+)", r"sqrt(\1)", text)
-            if '÷' in text:
-                text = text.replace("÷", '/')
-            if '×' in text:
-                text.replace('×', '*')
+            text = change_symbols(text)
             try:
                 result = eval(text, {"__builtins__": None}, {'sqrt': math.sqrt})
                 result = round(result, 10)
