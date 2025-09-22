@@ -1,6 +1,6 @@
 # ✨ Basic Calculator 🖥️🧮
 
-A sleek and user-friendly calculator desktop application built with **PyQt5**. This project showcases a modern UI design, custom error handling, and advanced math features like square root 🧮 and sign toggling ➕➖.
+A sleek and user-friendly calculator desktop application built with **PyQt5**. This project showcases a modern UI design, custom error handling, and simple math features like square root 🧮 and sign toggling ➕➖.
 
 ---
 
@@ -64,4 +64,5 @@ Apache 2.0 License © 2025 — see the [LICENSE](LICENSE) file for details.
 ## 📬 Contact
 
 Need help or want to share feedback? Reach out via GitHub Issues or email: shayan.ker85@gmail.com 📧
+
 
