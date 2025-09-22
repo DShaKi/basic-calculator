@@ -11,6 +11,7 @@ class CalculatorUI(QWidget):
         super().__init__()
         self.setWindowTitle("Basic Calculator")
         self.setGeometry(100, 100, 300, 400)
+        self.setFixedSize(350, 500)
         
         self.create_ui()
         
