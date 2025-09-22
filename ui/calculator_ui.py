@@ -37,7 +37,7 @@ class CalculatorUI(QWidget):
         buttons = [
             'C', '+/-', '√', '%',
             '7', '8', '9', '÷',
-            '4', '5', '6', '*',
+            '4', '5', '6', '×',
             '1', '2', '3', '-',
             '0', '.', '=', '+'
         ]
@@ -76,6 +76,8 @@ class CalculatorUI(QWidget):
                 text = re.sub(r"sqrt\((\d+)", r"sqrt(\1)", text)
             if '÷' in text:
                 text = text.replace("÷", '/')
+            if '×' in text:
+                text.replace('×', '*')
             try:
                 result = eval(text, {"__builtins__": None}, {'sqrt': math.sqrt})
                 result = round(result, 10)
@@ -86,7 +88,6 @@ class CalculatorUI(QWidget):
                 error.show_error_message(e)
         elif button_text == '+/-':
             match = re.search(r"([-]?\d*\.?\d+)$", text)
-            print(match)
             if match:
                 number = match.group(1)
                 start, end = match.span(1)
