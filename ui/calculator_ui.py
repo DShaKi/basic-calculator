@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QPushButton, QLineEdit
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import Qt
+from logic.calculator_logic import change_symbols 
 from ui.error_ui import Error
-from logic.calculator_logic import change_symbols
 import math
 import re
 
@@ -10,6 +10,8 @@ class CalculatorUI(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Basic Calculator")
+        self.icon = QIcon("assets/img/calculator_icon.png")
+        self.setWindowIcon(self.icon)
         self.setGeometry(100, 100, 300, 400)
         self.setFixedSize(350, 500)
         
