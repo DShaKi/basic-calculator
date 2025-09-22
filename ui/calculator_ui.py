@@ -36,7 +36,7 @@ class CalculatorUI(QWidget):
 
         buttons = [
             'C', '+/-', '√', '%',
-            '7', '8', '9', '/',
+            '7', '8', '9', '÷',
             '4', '5', '6', '*',
             '1', '2', '3', '-',
             '0', '.', '=', '+'
@@ -61,7 +61,7 @@ class CalculatorUI(QWidget):
         self.setLayout(main_layout)
 
     def button_style(self, btn_text):
-        if btn_text in ['C', '+/-', '√']:
+        if btn_text in ['C', '+/-', '√', '%']:
             return "background-color: #555; color: white; border-radius: 15px;"
         elif btn_text in ['/', '*', '-', '+', '=']:
             return "background-color: #ff9500; color: white; border-radius: 15px;"
@@ -74,6 +74,8 @@ class CalculatorUI(QWidget):
             if '√' in text:
                 text = text.replace("√", "sqrt(")
                 text = re.sub(r"sqrt\((\d+)", r"sqrt(\1)", text)
+            if '÷' in text:
+                text = text.replace("÷", '/')
             try:
                 result = eval(text, {"__builtins__": None}, {'sqrt': math.sqrt})
                 result = round(result, 10)
