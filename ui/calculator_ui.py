@@ -5,79 +5,12 @@ from logic.calculator_logic import change_eval_symbols, calculate
 from ui.error_ui import Error
 import re
 
-dark_stylesheet = """
-QWidget {
-    background-color: #121212;
-    color: #e0e0e0;
-    font-family: Helvetica, Arial, sans-serif;
-}
-QLineEdit {
-    background-color: #1e1e1e;
-    color: #ffffff;
-    border: 2px solid #5a5a5a;
-    border-radius: 10px;
-    padding-right: 15px;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
-}
-QLineEdit:hover, QLineEdit:focus {
-    border-color: #ff9500;
-    background-color: #2a2a2a;
-}
-QPushButton {
-    background-color: #2d2d30;
-    color: #e1e1e1;
-    border-radius: 15px;
-    border: 2px solid #5a5a5a;
-    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-    outline: none;
-}
-QPushButton:hover {
-    background-color: #ff9500;
-    color: #1a1a1a;
-    border-color: #ff9500;
-}
-QPushButton:pressed {
-    background-color: #cc7a00;
-    border-color: #cc7a00;
-}
-"""
+def load_stylesheet(path):
+    with open(path, 'r') as f:
+        return f.read()
 
-light_stylesheet = """
-QWidget {
-    background-color: #f0f0f0;
-    color: #000000;
-    font-family: Helvetica, Arial, sans-serif;
-}
-QLineEdit {
-    background-color: #ffffff;
-    color: #000000;
-    border: 2px solid #999999;
-    border-radius: 10px;
-    padding-right: 15px;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
-}
-QLineEdit:hover, QLineEdit:focus {
-    border-color: #ff9500;
-    background-color: #fff7e6;
-}
-QPushButton {
-    background-color: #e0e0e0;
-    color: #000000;
-    border-radius: 15px;
-    border: 2px solid #999999;
-    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-    outline: none;
-}
-QPushButton:hover {
-    background-color: #ff9500;
-    color: #fff;
-    border-color: #ff9500;
-}
-QPushButton:pressed {
-    background-color: #cc7a00;
-    border-color: #cc7a00;
-}
-"""
+light_stylesheet = load_stylesheet('ui/styles/light.qss')
+dark_stylesheet = load_stylesheet('ui/styles/dark.qss')
 
 class CalculatorUI(QWidget):
     def __init__(self):
