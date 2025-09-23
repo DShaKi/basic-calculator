@@ -9,7 +9,6 @@ QLineEdit {
     border: 2px solid #5a5a5a;
     border-radius: 10px;
     padding-right: 15px;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
 }
 QLineEdit:hover, QLineEdit:focus {
     border-color: #ff9500;
@@ -20,7 +19,6 @@ QPushButton {
     color: #e1e1e1;
     border-radius: 15px;
     border: 2px solid #5a5a5a;
-    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
     outline: none;
 }
 QPushButton:hover {

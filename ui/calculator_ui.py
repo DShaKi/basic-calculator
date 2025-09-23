@@ -1,5 +1,6 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QPushButton, QLineEdit, QShortcut
-from PyQt5.QtGui import QFont, QIcon, QKeySequence
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit
+from ui.components import Button
+from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import Qt, QSettings
 from logic.calculator_logic import change_eval_symbols, calculate
 from ui.error_ui import Error
@@ -45,7 +46,7 @@ class CalculatorUI(QWidget):
         main_layout.addWidget(self.display)
 
         # Dark mode toggle button
-        self.toggle_btn = QPushButton("Toggle Dark Mode")
+        self.toggle_btn = Button("Toggle Dark Mode")
         self.toggle_btn.setFixedHeight(40)
         self.toggle_btn.setFont(QFont("Helvetica", 14))
         self.toggle_btn.clicked.connect(self.toggle_dark_mode)
@@ -65,7 +66,7 @@ class CalculatorUI(QWidget):
         self.buttons = {}
         row, col = 0, 0
         for btn_text in buttons:
-            btn = QPushButton(btn_text)
+            btn = Button(btn_text)
             btn.setFixedSize(70, 70)
             btn.setFont(QFont("Helvetica", 18))
             btn.setStyleSheet(self.button_style(btn_text))
