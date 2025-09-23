@@ -1,7 +1,7 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QPushButton, QLineEdit
-from PyQt5.QtGui import QFont, QIcon
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QPushButton, QLineEdit, QShortcut
+from PyQt5.QtGui import QFont, QIcon, QKeySequence
 from PyQt5.QtCore import Qt
-from logic.calculator_logic import change_symbols 
+from logic.calculator_logic import change_eval_symbols, calculate
 from ui.error_ui import Error
 import math
 import re
@@ -23,7 +23,6 @@ class CalculatorUI(QWidget):
         main_layout.setSpacing(10)
 
         self.display = QLineEdit()
-        self.display.setReadOnly(True)
         self.display.setFixedHeight(60)
         self.display.setFont(QFont("Helvetica", 24))
         self.display.setAlignment(Qt.AlignRight)
@@ -33,6 +32,7 @@ class CalculatorUI(QWidget):
             border-radius: 10px;
             padding-right: 15px;
         """)
+        self.display.returnPressed.connect(lambda t=self.display.text(): self.on_enter_pressed(t))
         main_layout.addWidget(self.display)
 
         buttons_layout = QGridLayout()
@@ -53,7 +53,7 @@ class CalculatorUI(QWidget):
             btn.setFixedSize(70, 70)
             btn.setFont(QFont("Helvetica", 18))
             btn.setStyleSheet(self.button_style(btn_text))
-            btn.clicked.connect(lambda checked, b=btn_text: self.button_clicked(b))
+            btn.clicked.connect(lambda checked, b=btn_text: self.on_button_clicked(b))
             buttons_layout.addWidget(btn, row, col)
             self.buttons[btn_text] = btn
             col += 1
@@ -72,14 +72,12 @@ class CalculatorUI(QWidget):
         else:
             return "background-color: #333; color: white; border-radius: 15px;"
 
-    def button_clicked(self, button_text):
+    def on_button_clicked(self, button_text):
         text = self.display.text()
         if button_text == "=":
-            text = change_symbols(text)
+            text = change_eval_symbols(text)
             try:
-                result = eval(text, {"__builtins__": None}, {'sqrt': math.sqrt})
-                result = round(result, 10)
-                result = str(result)
+                result = calculate(text)
                 self.display.setText(result)
             except Exception as e:
                 error = Error()
@@ -98,3 +96,6 @@ class CalculatorUI(QWidget):
             self.display.setText('')
         else:
             self.display.setText(text + button_text)
+
+    def on_enter_pressed(self, text):
+        self.display.setText(calculate(text))
