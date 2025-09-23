@@ -1,10 +1,83 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QPushButton, QLineEdit, QShortcut
 from PyQt5.QtGui import QFont, QIcon, QKeySequence
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSettings
 from logic.calculator_logic import change_eval_symbols, calculate
 from ui.error_ui import Error
-import math
 import re
+
+dark_stylesheet = """
+QWidget {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: Helvetica, Arial, sans-serif;
+}
+QLineEdit {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border: 2px solid #5a5a5a;
+    border-radius: 10px;
+    padding-right: 15px;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+QLineEdit:hover, QLineEdit:focus {
+    border-color: #ff9500;
+    background-color: #2a2a2a;
+}
+QPushButton {
+    background-color: #2d2d30;
+    color: #e1e1e1;
+    border-radius: 15px;
+    border: 2px solid #5a5a5a;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    outline: none;
+}
+QPushButton:hover {
+    background-color: #ff9500;
+    color: #1a1a1a;
+    border-color: #ff9500;
+}
+QPushButton:pressed {
+    background-color: #cc7a00;
+    border-color: #cc7a00;
+}
+"""
+
+light_stylesheet = """
+QWidget {
+    background-color: #f0f0f0;
+    color: #000000;
+    font-family: Helvetica, Arial, sans-serif;
+}
+QLineEdit {
+    background-color: #ffffff;
+    color: #000000;
+    border: 2px solid #999999;
+    border-radius: 10px;
+    padding-right: 15px;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+QLineEdit:hover, QLineEdit:focus {
+    border-color: #ff9500;
+    background-color: #fff7e6;
+}
+QPushButton {
+    background-color: #e0e0e0;
+    color: #000000;
+    border-radius: 15px;
+    border: 2px solid #999999;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    outline: none;
+}
+QPushButton:hover {
+    background-color: #ff9500;
+    color: #fff;
+    border-color: #ff9500;
+}
+QPushButton:pressed {
+    background-color: #cc7a00;
+    border-color: #cc7a00;
+}
+"""
 
 class CalculatorUI(QWidget):
     def __init__(self):
@@ -15,8 +88,11 @@ class CalculatorUI(QWidget):
         self.setGeometry(100, 100, 300, 400)
         self.setFixedSize(350, 500)
         
-        self.create_ui()
+        self.settings = QSettings("YourCompany", "CalculatorApp")
         
+        self.create_ui()
+        self.load_settings()
+
     def create_ui(self):
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(10, 10, 10, 10)
@@ -34,6 +110,13 @@ class CalculatorUI(QWidget):
         """)
         self.display.returnPressed.connect(lambda t=self.display.text(): self.on_enter_pressed(t))
         main_layout.addWidget(self.display)
+
+        # Dark mode toggle button
+        self.toggle_btn = QPushButton("Toggle Dark Mode")
+        self.toggle_btn.setFixedHeight(40)
+        self.toggle_btn.setFont(QFont("Helvetica", 14))
+        self.toggle_btn.clicked.connect(self.toggle_dark_mode)
+        main_layout.addWidget(self.toggle_btn)
 
         buttons_layout = QGridLayout()
         buttons_layout.setSpacing(8)
@@ -99,3 +182,18 @@ class CalculatorUI(QWidget):
 
     def on_enter_pressed(self, text):
         self.display.setText(calculate(text))
+
+    def toggle_dark_mode(self):
+        if self.styleSheet() == dark_stylesheet:
+            self.setStyleSheet(light_stylesheet)
+            self.settings.setValue("dark_mode", False)
+        else:
+            self.setStyleSheet(dark_stylesheet)
+            self.settings.setValue("dark_mode", True)
+
+    def load_settings(self):
+        dark_mode = self.settings.value("dark_mode", False, type=bool)
+        if dark_mode:
+            self.setStyleSheet(dark_stylesheet)
+        else:
+            self.setStyleSheet(light_stylesheet)
