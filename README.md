@@ -1,6 +1,6 @@
 # ✨ Basic Calculator 🖥️🧮
 
-A sleek and user-friendly calculator desktop application built with **PyQt5**. This project showcases a modern UI design, custom error handling, and advanced math features like square root 🧮 and sign toggling ➕➖.
+A sleek and user-friendly calculator desktop application built with **PyQt5**. This project showcases a modern UI design, custom error handling, and simple math features like square root 🧮 and sign toggling ➕➖.
 
 ---
 
@@ -42,11 +42,9 @@ cd basic-calculator </pre>
 ## 🛠️ Project Structure
 
 - `main.py` — Main UI and application bootstrap  
-- `logic/` — Core calculator logic and expression processing  
-- `error_handling.py` — Exception analysis and user-friendly error dialogs  
+- `logic/` — Core calculator logic and expression processing
 - `ui/` — PyQt5 layout, widgets, and styling  
-- `resources/` — Images, icons, and screenshots  
-- `tests/` — Unit and integration tests  
+- `asssets/` — Images, icons, and screenshots 
 - `requirements.txt` — Project dependencies  
 
 ---
@@ -66,3 +64,5 @@ Apache 2.0 License © 2025 — see the [LICENSE](LICENSE) file for details.
 ## 📬 Contact
 
 Need help or want to share feedback? Reach out via GitHub Issues or email: shayan.ker85@gmail.com 📧
+
+
