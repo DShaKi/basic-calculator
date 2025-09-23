@@ -4,7 +4,7 @@ from PyQt5.QtGui import QFont, QIcon
 class Error(QWidget):
     def show_error_message(self, e):
         msg = QMessageBox(self)
-        icon = QIcon("assets/img/error_icon.png")
+        icon = QIcon("assets/icons/error.ico")
         msg.setWindowIcon(icon)
         msg.setIcon(QMessageBox.Critical)
         msg.setWindowTitle("Error!")

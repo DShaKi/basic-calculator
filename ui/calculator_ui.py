@@ -10,7 +10,7 @@ class CalculatorUI(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Basic Calculator")
-        self.icon = QIcon("assets/img/calculator_icon.png")
+        self.icon = QIcon("assets/icons/calculator.ico")
         self.setWindowIcon(self.icon)
         self.setGeometry(100, 100, 300, 400)
         self.setFixedSize(350, 500)
