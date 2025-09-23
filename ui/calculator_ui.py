@@ -20,7 +20,7 @@ class CalculatorUI(QWidget):
         self.icon = QIcon("assets/icons/calculator.ico")
         self.setWindowIcon(self.icon)
         self.setGeometry(100, 100, 300, 400)
-        self.setFixedSize(350, 500)
+        self.setFixedSize(350, 550)
         
         self.settings = QSettings("YourCompany", "CalculatorApp")
         
@@ -33,7 +33,7 @@ class CalculatorUI(QWidget):
         main_layout.setSpacing(10)
 
         self.display = QLineEdit()
-        self.display.setFixedHeight(60)
+        self.display.setFixedHeight(80)
         self.display.setFont(QFont("Helvetica", 24))
         self.display.setAlignment(Qt.AlignRight)
         self.display.setStyleSheet("""
@@ -45,7 +45,6 @@ class CalculatorUI(QWidget):
         self.display.returnPressed.connect(lambda t=self.display.text(): self.on_enter_pressed(t))
         main_layout.addWidget(self.display)
 
-        # Dark mode toggle button
         self.toggle_btn = Button("Toggle Dark Mode")
         self.toggle_btn.setFixedHeight(40)
         self.toggle_btn.setFont(QFont("Helvetica", 14))

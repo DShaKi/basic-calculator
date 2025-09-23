@@ -19,7 +19,7 @@ class Button(QPushButton):
     def enterEvent(self, event):
         self.anim.stop()
         self.anim.setStartValue(self.color_effect.strength())
-        self.anim.setEndValue(0.25)  
+        self.anim.setEndValue(0.25)
         self.anim.start()
         super().enterEvent(event)
 
