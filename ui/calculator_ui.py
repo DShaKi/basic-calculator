@@ -22,6 +22,8 @@ class CalculatorUI(QMainWindow):
 
         self.setWindowTitle("Basic Calculator")
         self.icon = QIcon("assets/icons/calculator.ico")
+        self.setMinimumSize(350, 550)
+        self.setMaximumSize(550, 550)
         self.setWindowIcon(self.icon)
         self.setGeometry(100, 100, 300, 400)
         
