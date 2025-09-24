@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGri
 from ui.components import Button, IconButton
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import Qt, QSettings
-from logic.calculator_logic import change_eval_symbols, calculate
+from logic.calculator_logic import calculate
 from ui.error_ui import Error
 import re
 
@@ -16,7 +16,7 @@ dark_stylesheet = load_stylesheet('ui/styles/dark.qss')
 class CalculatorUI(QMainWindow):
     def __init__(self):
         super().__init__()
-        
+
         self.history = []
 
         self.base_width = 350
@@ -53,7 +53,7 @@ class CalculatorUI(QMainWindow):
             border-radius: 10px;
             padding-right: 15px;
         """)
-        self.display.returnPressed.connect(lambda t=self.display.text(): self.on_enter_pressed(t))
+        self.display.returnPressed.connect(self.on_enter_pressed)
         self.main_layout.addWidget(self.display)
 
         self.top_bar = QHBoxLayout()
@@ -125,7 +125,6 @@ class CalculatorUI(QMainWindow):
     def on_button_clicked(self, button_text):
         text = self.display.text()
         if button_text == "=":
-            text = change_eval_symbols(text)
             try:
                 result = calculate(text)
                 self.display.setText(result)
@@ -148,7 +147,8 @@ class CalculatorUI(QMainWindow):
         else:
             self.display.setText(text + button_text)
 
-    def on_enter_pressed(self, text):
+    def on_enter_pressed(self):
+        text = self.display.text()
         self.display.setText(calculate(text))
 
     def toggle_dark_mode(self):
