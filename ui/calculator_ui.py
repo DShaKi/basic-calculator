@@ -32,6 +32,8 @@ class CustomTitleBar(QWidget):
         layout.addWidget(self.logo_label)
 
         self.title_label = QLabel("Basic Calculator")
+        self.title_font = QFont("Segoe UI Variable", 14, QFont.Bold)
+        self.title_label.setFont(self.title_font)
         layout.addWidget(self.title_label)
 
         layout.addStretch()
