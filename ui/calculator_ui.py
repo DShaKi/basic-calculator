@@ -16,8 +16,7 @@ dark_stylesheet = load_stylesheet('ui/styles/dark.qss')
 class CalculatorUI(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.mode = None
-
+        
         self.history = []
 
         self.base_width = 350
@@ -33,8 +32,8 @@ class CalculatorUI(QMainWindow):
         
         self.settings = QSettings("MagicCo", "CalculatorApp")
         
-        self.create_ui()
         self.load_settings()
+        self.create_ui()
 
     def create_ui(self):
         self.central_widget = QWidget()
