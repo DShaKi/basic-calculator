@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLineEdit, QDockWidget, QListWidget
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLineEdit, QDockWidget, QTextBrowser
 from ui.components import Button, IconButton
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import Qt, QSettings
@@ -74,7 +74,8 @@ class CalculatorUI(QMainWindow):
         self.history_panel = QDockWidget("", self)
         self.history_panel.setAllowedAreas(Qt.RightDockWidgetArea)
         self.history_panel.setFixedSize(200, self.base_height)
-        self.history_list = QListWidget()
+        self.history_list = QTextBrowser()
+        self.history_list.setFont(QFont("Courier New", 12))
         self.history_panel.setWidget(self.history_list)
         self.history_panel.setVisible(False)
         self.history_panel.setFeatures((QDockWidget.DockWidgetClosable | QDockWidget.DockWidgetMovable) & ~QDockWidget.DockWidgetClosable)
@@ -162,9 +163,10 @@ class CalculatorUI(QMainWindow):
             self.settings.setValue("dark_mode", True)
 
     def add_to_history(self, operation, result):
-        history_text = f"{operation}\n{result}"
-        self.history.append((operation, result))
-        self.history_list.addItem(history_text)
+        history_text = f"{operation}=\n{result}"
+        self.history.append((operation+"=", result))
+        self.history_list.append(history_text)
+        self.history_list.append('─────────────')
 
     def toggle_history_panel(self):
         if self.history_panel.isVisible():

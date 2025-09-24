@@ -47,7 +47,7 @@ QDockWidget::title {
     border-bottom: 1px solid #999999;
 }
 
-QListWidget {
+QTextBrowser {
     background-color: #ffffff;
     border: none;
     color: #000000;
