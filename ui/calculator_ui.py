@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLineEdit
-from ui.components import Button
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLineEdit, QDockWidget, QListWidget
+from ui.components import Button, IconButton
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import Qt, QSettings
 from logic.calculator_logic import change_eval_symbols, calculate
@@ -13,21 +13,26 @@ def load_stylesheet(path):
 light_stylesheet = load_stylesheet('ui/styles/light.qss')
 dark_stylesheet = load_stylesheet('ui/styles/dark.qss')
 
-class CalculatorUI(QWidget):
+class CalculatorUI(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.mode = None
+
+        self.history = []
+
         self.setWindowTitle("Basic Calculator")
         self.icon = QIcon("assets/icons/calculator.ico")
         self.setWindowIcon(self.icon)
         self.setGeometry(100, 100, 300, 400)
         self.setFixedSize(350, 550)
         
-        self.settings = QSettings("YourCompany", "CalculatorApp")
+        self.settings = QSettings("MagicCo", "CalculatorApp")
         
         self.create_ui()
         self.load_settings()
 
     def create_ui(self):
+        central_widget = QWidget()
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(10, 10, 10, 10)
         main_layout.setSpacing(10)
@@ -45,11 +50,20 @@ class CalculatorUI(QWidget):
         self.display.returnPressed.connect(lambda t=self.display.text(): self.on_enter_pressed(t))
         main_layout.addWidget(self.display)
 
-        self.toggle_btn = Button("Toggle Dark Mode")
-        self.toggle_btn.setFixedHeight(40)
-        self.toggle_btn.setFont(QFont("Helvetica", 14))
-        self.toggle_btn.clicked.connect(self.toggle_dark_mode)
-        main_layout.addWidget(self.toggle_btn)
+        self.top_bar = QHBoxLayout()
+        main_layout.addLayout(self.top_bar)
+
+        self.toggle_dark_mode_btn = Button("Toggle Dark Mode")
+        self.toggle_dark_mode_btn.setFixedHeight(50)
+        self.toggle_dark_mode_btn.setFont(QFont("Helvetica", 12))
+        self.toggle_dark_mode_btn.clicked.connect(self.toggle_dark_mode)
+        self.top_bar.addWidget(self.toggle_dark_mode_btn)
+
+        history_icon_paths = {"light_normal": "assets/icons/light_normal_history.ico", "light_hover": "assets/icons/light_hover_history.ico", "dark_normal": "assets/icons/dark_normal_history.ico", "dark_hover": "assets/icons/dark_hover_history.ico"}
+        self.history_btn = IconButton(history_icon_paths, self.mode)
+        self.history_btn.setFixedSize(50, 50)
+        self.history_btn.clicked.connect(self.toggle_history_panel)
+        self.top_bar.addWidget(self.history_btn)
 
         buttons_layout = QGridLayout()
         buttons_layout.setSpacing(8)
@@ -78,7 +92,11 @@ class CalculatorUI(QWidget):
                 row += 1
 
         main_layout.addLayout(buttons_layout)
-        self.setLayout(main_layout)
+
+        central_widget.setLayout(main_layout)
+
+        self.setCentralWidget(central_widget)
+
 
     def button_style(self, btn_text):
         if btn_text in ['C', '+/-', '√', '%']:
@@ -95,6 +113,7 @@ class CalculatorUI(QWidget):
             try:
                 result = calculate(text)
                 self.display.setText(result)
+                self.add_to_history(text, result)
             except Exception as e:
                 error = Error()
                 error.show_error_message(e)
@@ -119,14 +138,27 @@ class CalculatorUI(QWidget):
     def toggle_dark_mode(self):
         if self.styleSheet() == dark_stylesheet:
             self.setStyleSheet(light_stylesheet)
+            self.history_btn.toggle_mode("light")
             self.settings.setValue("dark_mode", False)
         else:
             self.setStyleSheet(dark_stylesheet)
+            self.history_btn.toggle_mode("dark")
             self.settings.setValue("dark_mode", True)
 
+    def add_to_history(self, operation, result):
+        history_text = f"{operation}\n{result}"
+        self.history.append((operation, result))
+        self.history_list.addItem(history_text)
+
+    def toggle_history_panel(self):
+        if self.history_panel.isVisible():
+            self.history_panel.hide()
+        else:
+            self.history_panel.show()
+
     def load_settings(self):
-        dark_mode = self.settings.value("dark_mode", False, type=bool)
-        if dark_mode:
+        self.mode = self.settings.value("dark_mode", False, type=bool)
+        if self.mode:
             self.setStyleSheet(dark_stylesheet)
         else:
             self.setStyleSheet(light_stylesheet)

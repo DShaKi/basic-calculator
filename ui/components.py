@@ -1,10 +1,10 @@
 from PyQt5.QtWidgets import QPushButton, QGraphicsColorizeEffect
-from PyQt5.QtCore import QPropertyAnimation, QEasingCurve
-from PyQt5.QtGui import QColor
+from PyQt5.QtCore import QPropertyAnimation, QEasingCurve, QEvent, QSize
+from PyQt5.QtGui import QIcon
 
 class Button(QPushButton):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, parent=None):
+        super().__init__(parent)
         
         self.color_effect = QGraphicsColorizeEffect(self)
         self.button_palette = self.palette()
@@ -29,3 +29,39 @@ class Button(QPushButton):
         self.anim.setEndValue(0)
         self.anim.start()
         super().leaveEvent(event)
+
+class IconButton(Button):
+    def __init__(self, icon_paths: dict, mode: bool, parent=None):
+        """
+        icon_paths: dict with keys:
+            'light_normal', 'light_hover', 'dark_normal', 'dark_hover'
+            each value is a file path string to the icon image
+        """
+        super().__init__(parent) 
+
+        self.icons = {
+            key: QIcon(path) for key, path in icon_paths.items()
+        }
+
+        if mode:
+            self.mode = "dark"
+        else:
+            self.mode = "light"
+        
+        self.setIcon(self.icons[f"{self.mode}_normal"])
+        self.setIconSize(QSize(24, 24))
+
+        self.setMouseTracking(True)
+        self.installEventFilter(self)
+
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.Enter:
+            self.setIcon(self.icons[f"{self.mode}_hover"])
+        elif event.type() == QEvent.Leave:
+            self.setIcon(self.icons[f"{self.mode}_normal"])
+        return super().eventFilter(obj, event)
+
+    def toggle_mode(self, mode):
+        self.mode = mode
+        print(self.mode)
+        self.setIcon(self.icons[f"{mode}_normal"])
