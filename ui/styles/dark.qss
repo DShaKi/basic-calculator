@@ -3,6 +3,7 @@ QWidget {
     color: #e0e0e0;
     font-family: Helvetica, Arial, sans-serif;
 }
+
 QLineEdit {
     background-color: #1e1e1e;
     color: #ffffff;
@@ -14,6 +15,7 @@ QLineEdit:hover, QLineEdit:focus {
     border-color: #ff9500;
     background-color: #2a2a2a;
 }
+
 QPushButton {
     background-color: #2d2d30;
     color: #e1e1e1;
@@ -29,4 +31,23 @@ QPushButton:hover {
 QPushButton:pressed {
     background-color: #cc7a00;
     border-color: #cc7a00;
+}
+
+QDockWidget {
+    background-color: #222222;
+    border: 1px solid #444444;
+}
+QDockWidget::title {
+    background-color: #333333;
+    color: #e0e0e0;
+    padding-left: 10px;
+    height: 30px;
+    font-weight: bold;
+    border-bottom: 1px solid #444444;
+}
+
+QListWidget {
+    background-color: #222222;
+    border: none;
+    color: #e0e0e0;
 }

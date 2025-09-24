@@ -24,7 +24,6 @@ class CalculatorUI(QMainWindow):
         self.icon = QIcon("assets/icons/calculator.ico")
         self.setWindowIcon(self.icon)
         self.setGeometry(100, 100, 300, 400)
-        self.setFixedSize(350, 550)
         
         self.settings = QSettings("MagicCo", "CalculatorApp")
         
@@ -32,10 +31,12 @@ class CalculatorUI(QMainWindow):
         self.load_settings()
 
     def create_ui(self):
-        central_widget = QWidget()
-        main_layout = QVBoxLayout()
-        main_layout.setContentsMargins(10, 10, 10, 10)
-        main_layout.setSpacing(10)
+        self.central_widget = QWidget()
+        self.central_widget.setFixedSize(350, 550)
+
+        self.main_layout = QVBoxLayout()
+        self.main_layout.setContentsMargins(10, 10, 10, 10)
+        self.main_layout.setSpacing(10)
 
         self.display = QLineEdit()
         self.display.setFixedHeight(80)
@@ -48,10 +49,10 @@ class CalculatorUI(QMainWindow):
             padding-right: 15px;
         """)
         self.display.returnPressed.connect(lambda t=self.display.text(): self.on_enter_pressed(t))
-        main_layout.addWidget(self.display)
+        self.main_layout.addWidget(self.display)
 
         self.top_bar = QHBoxLayout()
-        main_layout.addLayout(self.top_bar)
+        self.main_layout.addLayout(self.top_bar)
 
         self.toggle_dark_mode_btn = Button("Toggle Dark Mode")
         self.toggle_dark_mode_btn.setFixedHeight(50)
@@ -64,6 +65,16 @@ class CalculatorUI(QMainWindow):
         self.history_btn.setFixedSize(50, 50)
         self.history_btn.clicked.connect(self.toggle_history_panel)
         self.top_bar.addWidget(self.history_btn)
+
+        self.history_panel = QDockWidget("", self)
+        self.history_panel.setAllowedAreas(Qt.RightDockWidgetArea)
+        self.history_panel.setFixedSize(200, 550)
+        self.history_list = QListWidget()
+        self.history_panel.setWidget(self.history_list)
+        self.history_panel.setVisible(False)
+        self.history_panel.setFeatures((QDockWidget.DockWidgetClosable | QDockWidget.DockWidgetMovable) & ~QDockWidget.DockWidgetClosable)
+        self.history_panel.setTitleBarWidget(QWidget())
+        self.addDockWidget(Qt.RightDockWidgetArea, self.history_panel)
 
         buttons_layout = QGridLayout()
         buttons_layout.setSpacing(8)
@@ -91,11 +102,11 @@ class CalculatorUI(QMainWindow):
                 col = 0
                 row += 1
 
-        main_layout.addLayout(buttons_layout)
+        self.main_layout.addLayout(buttons_layout)
 
-        central_widget.setLayout(main_layout)
+        self.central_widget.setLayout(self.main_layout)
 
-        self.setCentralWidget(central_widget)
+        self.setCentralWidget(self.central_widget)
 
 
     def button_style(self, btn_text):
@@ -153,8 +164,12 @@ class CalculatorUI(QMainWindow):
     def toggle_history_panel(self):
         if self.history_panel.isVisible():
             self.history_panel.hide()
+            self.resize(self.width() - self.history_panel.width(), self.height())
+            self.adjustSize()
         else:
             self.history_panel.show()
+            self.resize(self.width() + self.history_panel.width(), self.height())
+            self.adjustSize()
 
     def load_settings(self):
         self.mode = self.settings.value("dark_mode", False, type=bool)

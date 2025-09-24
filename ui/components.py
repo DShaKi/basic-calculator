@@ -63,5 +63,4 @@ class IconButton(Button):
 
     def toggle_mode(self, mode):
         self.mode = mode
-        print(self.mode)
         self.setIcon(self.icons[f"{mode}_normal"])
