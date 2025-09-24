@@ -20,10 +20,14 @@ class CalculatorUI(QMainWindow):
 
         self.history = []
 
+        self.base_width = 350
+        self.base_height = 550
+        self.expanded_width = 550
+
         self.setWindowTitle("Basic Calculator")
         self.icon = QIcon("assets/icons/calculator.ico")
-        self.setMinimumSize(350, 550)
-        self.setMaximumSize(550, 550)
+        self.setMinimumSize(self.base_width, self.base_height)
+        self.setMaximumSize(self.expanded_width, self.base_height)
         self.setWindowIcon(self.icon)
         self.setGeometry(100, 100, 300, 400)
         
@@ -34,7 +38,7 @@ class CalculatorUI(QMainWindow):
 
     def create_ui(self):
         self.central_widget = QWidget()
-        self.central_widget.setFixedSize(350, 550)
+        self.central_widget.setFixedSize(self.base_width, self.base_height)
 
         self.main_layout = QVBoxLayout()
         self.main_layout.setContentsMargins(10, 10, 10, 10)
@@ -70,7 +74,7 @@ class CalculatorUI(QMainWindow):
 
         self.history_panel = QDockWidget("", self)
         self.history_panel.setAllowedAreas(Qt.RightDockWidgetArea)
-        self.history_panel.setFixedSize(200, 550)
+        self.history_panel.setFixedSize(200, self.base_height)
         self.history_list = QListWidget()
         self.history_panel.setWidget(self.history_list)
         self.history_panel.setVisible(False)
@@ -166,12 +170,13 @@ class CalculatorUI(QMainWindow):
     def toggle_history_panel(self):
         if self.history_panel.isVisible():
             self.history_panel.hide()
-            self.resize(self.width() - self.history_panel.width(), self.height())
-            self.adjustSize()
+            self.setFixedSize(self.base_width, self.base_height)
         else:
             self.history_panel.show()
-            self.resize(self.width() + self.history_panel.width(), self.height())
-            self.adjustSize()
+            self.setMinimumSize(self.base_width, self.base_height)
+            self.setMaximumSize(self.expanded_width, self.base_height)
+            self.resize(self.expanded_width, self.base_height)
+            self.setFixedSize(self.expanded_width, self.base_height)
 
     def load_settings(self):
         self.mode = self.settings.value("dark_mode", False, type=bool)
