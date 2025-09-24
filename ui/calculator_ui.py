@@ -1,7 +1,7 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLineEdit, QDockWidget, QTextBrowser
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLineEdit, QDockWidget, QTextBrowser, QLabel, QToolButton, QMenu, QPushButton
 from ui.components import Button, IconButton
-from PyQt5.QtGui import QFont, QIcon
-from PyQt5.QtCore import Qt, QSettings
+from PyQt5.QtGui import QFont, QIcon, QPixmap
+from PyQt5.QtCore import Qt, QSettings, QPoint
 from logic.calculator_logic import calculate
 from ui.error_ui import Error
 import re
@@ -13,6 +13,93 @@ def load_stylesheet(path):
 light_stylesheet = load_stylesheet('ui/styles/light.qss')
 dark_stylesheet = load_stylesheet('ui/styles/dark.qss')
 
+
+class CustomTitleBar(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.parent = parent
+        self.setFixedHeight(50)
+        self._startPos = QPoint(0, 0)
+        self._clickPos = None
+
+        layout = QHBoxLayout()
+        layout.setContentsMargins(10, 0, 10, 0)
+
+        self.logo_label = QLabel()
+        self.logo_label.setStyleSheet("background-color: transparent;")
+        pixmap = QPixmap("assets/icons/calculator.ico")
+        self.logo_label.setPixmap(pixmap.scaled(24, 24, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        layout.addWidget(self.logo_label)
+
+        self.title_label = QLabel("Basic Calculator")
+        layout.addWidget(self.title_label)
+
+        layout.addStretch()
+
+        self.min_button = QPushButton("─")
+        self.min_button.setFixedSize(32, 32)
+        self.min_button.clicked.connect(self.parent.showMinimized)
+        layout.addWidget(self.min_button)
+
+        self.close_button = QPushButton("✕")
+        self.close_button.setFixedSize(32, 32)
+        self.close_button.clicked.connect(self.parent.close)
+        layout.addWidget(self.close_button)
+
+        if self.parent.mode:
+            self.mode = "dark"
+        else:
+            self.mode = "light"
+        self.update_theme(self.mode)
+
+        self.setLayout(layout)
+        self.setStyleSheet("background-color: #19232d;")
+
+    def update_theme(self, mode):
+        if mode == "dark":
+            bg_color = "#19232d"
+            text_color = "#F0F0F0"
+            btn_hover = "rgba(255, 255, 255, 0.2)"
+        else:
+            bg_color = "#f0f0f0"
+            text_color = "#212121"
+            btn_hover = "rgba(0, 0, 0, 0.1)"
+
+        self.setStyleSheet(f"background-color: {bg_color};")
+
+        self.title_label.setStyleSheet(f"background-color: transparent; color: {text_color}; font: bold 14px;")
+
+        btn_style = f"""
+            QPushButton {{
+                background-color: transparent;
+                color: {text_color};
+                border: none;
+                font: bold 16px;
+            }}
+            QPushButton:hover {{
+                background-color: {btn_hover};
+            }}
+        """
+        self.min_button.setStyleSheet(btn_style)
+        self.close_button.setStyleSheet(btn_style)
+
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self._clickPos = event.globalPos()
+            self._startPos = self.parent.frameGeometry().topLeft()
+        event.accept()
+
+    def mouseMoveEvent(self, event):
+        if self._clickPos is not None:
+            delta = event.globalPos() - self._clickPos
+            self.parent.move(self._startPos + delta)
+        event.accept()
+
+    def mouseReleaseEvent(self, event):
+        self._clickPos = None
+        event.accept()
+
 class CalculatorUI(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -20,24 +107,26 @@ class CalculatorUI(QMainWindow):
         self.history = []
 
         self.base_width = 350
-        self.base_height = 550
+        self.base_height = 620
         self.expanded_width = 550
 
-        self.setWindowTitle("Basic Calculator")
+        self.settings = QSettings("MagicCo", "CalculatorApp")
+        
+        self.load_settings()
+
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        self.title_bar = CustomTitleBar(self)
+        self.setMenuWidget(self.title_bar)
         self.icon = QIcon("assets/icons/calculator.ico")
         self.setMinimumSize(self.base_width, self.base_height)
         self.setMaximumSize(self.expanded_width, self.base_height)
         self.setWindowIcon(self.icon)
         self.setGeometry(100, 100, 300, 400)
         
-        self.settings = QSettings("MagicCo", "CalculatorApp")
-        
-        self.load_settings()
         self.create_ui()
 
     def create_ui(self):
         self.central_widget = QWidget()
-        self.central_widget.setFixedSize(self.base_width, self.base_height)
 
         self.main_layout = QVBoxLayout()
         self.main_layout.setContentsMargins(10, 10, 10, 10)
@@ -65,7 +154,7 @@ class CalculatorUI(QMainWindow):
         self.toggle_dark_mode_btn.clicked.connect(self.toggle_dark_mode)
         self.top_bar.addWidget(self.toggle_dark_mode_btn)
 
-        history_icon_paths = {"light_normal": "assets/icons/light_normal_history.ico", "light_hover": "assets/icons/light_hover_history.ico", "dark_normal": "assets/icons/dark_normal_history.ico", "dark_hover": "assets/icons/dark_hover_history.ico"}
+        history_icon_paths = {"light_normal": "assets/icons/light/normal_history.ico", "light_hover": "assets/icons/light/hover_history.ico", "dark_normal": "assets/icons/dark/normal_history.ico", "dark_hover": "assets/icons/dark/hover_history.ico"}
         self.history_btn = IconButton(history_icon_paths, self.mode)
         self.history_btn.setFixedSize(50, 50)
         self.history_btn.clicked.connect(self.toggle_history_panel)
@@ -155,10 +244,12 @@ class CalculatorUI(QMainWindow):
     def toggle_dark_mode(self):
         if self.styleSheet() == dark_stylesheet:
             self.setStyleSheet(light_stylesheet)
+            self.title_bar.update_theme("light")
             self.history_btn.toggle_mode("light")
             self.settings.setValue("dark_mode", False)
         else:
             self.setStyleSheet(dark_stylesheet)
+            self.title_bar.update_theme("dark")
             self.history_btn.toggle_mode("dark")
             self.settings.setValue("dark_mode", True)
 
